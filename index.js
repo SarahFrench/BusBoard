@@ -21,6 +21,20 @@ log4js.configure({
 
 const logger = log4js.getLogger();
 
+function sortBusArrivals(arrivingBuses){
+
+  function compare(a,b) {
+    if (a.timeToLive < b.timeToLive)
+      return -1;
+    if (a.timeToLive > b.timeToLive)
+      return 1;
+    return 0;
+  }
+
+  arrivingBuses = arrivingBuses.sort(compare);
+
+  return arrivingBuses
+}
 
 
 //=============================================================
@@ -38,7 +52,9 @@ request('https://api.tfl.gov.uk/StopPoint/' + busStop + '/' + 'arrivals?app_id='
   if (parseInt(response.statusCode) === 404) {
     logger.fatal("incorrect bus stop code entered by user");
   }
-  let arrivingBuses = JSON.parse(body)
+  let arrivingBuses = JSON.parse(body);
+  arrivingBuses = sortBusArrivals(arrivingBuses);
+  
   console.log("These are the next 5 buses at: " + arrivingBuses[0].stationName)
   for (var i = 0; i < 5; i++) {
     let timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
