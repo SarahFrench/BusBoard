@@ -43,5 +43,12 @@ Your program should:
 
 JSON file from TfL does not list arriving buses in order of arrival. To do this we sort the array of arriving bus objects using a function called sortBusArrivals() using a comparison function we found at Stack Exchange (https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value).
 
+Instead of using moment to calculate arrival time of bus relative to now, could have used timeToStation property of bus objects. timeToStation: 620 = 620 seconds until arrival.
 
 **Part 2: Bus Stops (near a given postcode)**
+
+1) Get longitude and latitude using postcode.io Api
+2) Get nearest bus stops from long/lat coordinates using TfL
+    - Gets a list of StopPoints within {radius} by the specified criteria
+    - ERROR IN SWAGGER OUTPUT: if URL contains &location.lat=xxx it doesn't work, but if URL contains &lat=xxx it does.
+      https://api.tfl.gov.uk/swagger/ui/index.html#!/StopPoint/StopPoint_GetByGeoPoint
