@@ -47,11 +47,13 @@ Instead of using moment to calculate arrival time of bus relative to now, could 
 
 **Part 2: Bus Stops (near a given postcode)**
 
-1) Get longitude and latitude using postcode.io Api
+1) Get longitude and latitude using postcode.io API
 2) Get nearest bus stops from long/lat coordinates using TfL
     - Gets a list of StopPoints within {radius} by the specified criteria
     - ERROR IN SWAGGER OUTPUT: if URL contains &location.lat=xxx it doesn't work, but if URL contains &lat=xxx it does.
       https://api.tfl.gov.uk/swagger/ui/index.html#!/StopPoint/StopPoint_GetByGeoPoint
 
-
+NOTE:
 To make sure that different processes (e.g. loading info from TfL) occur in the correct order we call functions from within functions (to force order of events to be when variables have been assigned the required values). This can be changed in future to use promises. If we weren't refactoring tomorrow, would need to change function names as they aren't accurate.
+
+User input postcode ==> findLongLat(postcode) =inside=> find2ClosestBusStops(postcodeLongLat) =inside=> getArrivingBuses(nearbyStopCodes) =inside=> printArrivingBuses(arrivingBuses). Everything is nested.
