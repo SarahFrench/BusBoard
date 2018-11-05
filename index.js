@@ -41,8 +41,8 @@ request('https://api.tfl.gov.uk/StopPoint/' + busStop + '/' + 'arrivals?app_id='
   let arrivingBuses = JSON.parse(body)
   console.log("These are the next 5 buses at: " + arrivingBuses[0].stationName)
   for (var i = 0; i < 5; i++) {
-    let timeToLive = moment(arrivingBuses[i].timeToLive).format('LT');
-    console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arriving at ${timeToLive}`)
+    let timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
+    console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
     // console.log(arrivingBuses[i].timeToLive);
 
   }
