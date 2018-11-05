@@ -52,12 +52,13 @@ console.log("Please enter a postcode");
 // let postcode = readline.prompt();
 let postcode = 'NW1 8QA'
 
-let postcodeLongLat = []; //Longitude as first element, latitude as second element
+
 
 findLongLat(postcode);
 
 
 function findLongLat(postcode){
+  let postcodeLongLat = []; //Longitude as first element, latitude as second element
   request(`https://api.postcodes.io/postcodes/${postcode}`, function (error, response, body){
     // console.log(error);
     // console.log(response);
@@ -72,11 +73,16 @@ function findLongLat(postcode){
 }
 
 function findBusStop(postcodeLongLat){
+  let nearbyStopCodes = []
   let stopTypes = "NaptanPublicBusCoachTram";
   let radius = 200;
 
   request(`https://api-radon.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`, function (error, response, body){
-    console.log(body);
+    let parsedBody = JSON.parse(body)
+
+    nearbyStopCodes[0] = parsedBody.stopPoints[0].naptanId;
+    nearbyStopCodes[1] = parsedBody.stopPoints[1].naptanId;
+    getArrivingBuses(nearbyStopCodes)
   })
 }
 
@@ -84,22 +90,26 @@ function printStuff(x){
   console.log(x);
 }
 
-// urlStopPoint = `https://api.tfl.gov.uk/StopPoint/${busStop}/arrivals?app_id=${appId}&app_key=${appKey}`;
-//
-// request(urlStopPoint, function (error, response, body){
-//   // console.log('error:', error); // Print the error if one occurred
-//   // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-//   if (parseInt(response.statusCode) === 404) {
-//     logger.fatal("incorrect bus stop code entered by user");
-//   }
-//   let arrivingBuses = JSON.parse(body);
-//   arrivingBuses = sortBusArrivals(arrivingBuses);
-//
-//   console.log("These are the next 5 buses at: " + arrivingBuses[0].stationName)
-//   for (var i = 0; i < 5; i++) {
-//     let timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
-//     console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
-//     // console.log(arrivingBuses[i].timeToLive);
-//
-//   }
-// });
+
+
+function getArrivingBuses(nearbyStopCodes) {
+  let urlStopPoint;
+  nearbyStopCodes.forEach(function(nearbyStopCode) {
+    urlStopPoint = `https://api.tfl.gov.uk/StopPoint/${nearbyStopCode}/arrivals?app_id=${appId}&app_key=${appKey}`;
+    request(urlStopPoint, function (error, response, body){
+      // console.log('error:', error); // Print the error if one occurred
+      // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+      if (parseInt(response.statusCode) === 404) {
+        logger.fatal("incorrect bus stop code entered by user");
+      }
+      let arrivingBuses = JSON.parse(body);
+      arrivingBuses = sortBusArrivals(arrivingBuses);
+
+      console.log("These are the next 5 buses at: " + arrivingBuses[0].stationName)
+      for (var i = 0; i < 5; i++) {
+        let timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
+        console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
+      }
+    })
+  })
+}
