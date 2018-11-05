@@ -42,16 +42,16 @@ function sortBusArrivals(arrivingBuses){
 
 let appId = '84b66fad';
 let appKey = 'd5c92ab3e708aee956adf533088ad795';
-console.log("Please enter a bus stop number");
+// console.log("Please enter a bus stop number");
 // let busStop = readline.prompt();
-let busStop = '490008660N'
+// let busStop = '490008660N'
 
+
+
+console.log("Please enter a postcode eg. 'NW1 8QA'");
+let postcode = readline.prompt();
+// let postcode = 'NW1 8QA'
 logger.info("User input taken")
-
-console.log("Please enter a postcode");
-// let postcode = readline.prompt();
-let postcode = 'NW1 8QA'
-
 
 
 findLongLat(postcode);
@@ -75,7 +75,7 @@ function findLongLat(postcode){
 function findBusStop(postcodeLongLat){
   let nearbyStopCodes = []
   let stopTypes = "NaptanPublicBusCoachTram";
-  let radius = 200;
+  let radius = 1000;
 
   request(`https://api-radon.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`, function (error, response, body){
     let parsedBody = JSON.parse(body)
@@ -106,9 +106,16 @@ function getArrivingBuses(nearbyStopCodes) {
       arrivingBuses = sortBusArrivals(arrivingBuses);
 
       console.log("These are the next 5 buses at: " + arrivingBuses[0].stationName)
-      for (var i = 0; i < 5; i++) {
-        let timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
-        console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
+      let timeToLive;
+      if (arrivingBuses.length >= 5) {
+        for (var i = 0; i < 5; i++) {
+          timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
+          console.log(`${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
+        }} else {
+          arrivingBuses.forEach(function(bus){
+            timeToLive = moment(bus.timeToLive).fromNow();
+            console.log(`${i + 1}: ${bus.lineId} to ${bus.destinationName} arrives ${timeToLive}`)
+          })
       }
     })
   })
