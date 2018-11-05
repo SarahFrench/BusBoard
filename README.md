@@ -13,7 +13,8 @@ For Promises, see: https://medium.freecodecamp.org/javascript-promises-explained
     Part 1:
         Example page : https://tfl.gov.uk/bus/stop/490015367S/lady-somerset-road
         TfL API : https://api-portal.tfl.gov.uk/signup
-        TfL Unified API : https://api.tfl.gov.uk/
+        Our login : CorndelStudents
+            Password : Look in Slack messages Sarah&Mitesh
     Part 2:
         Postcodes API : http://api.postcodes.io
         TfL "get a list of StopPoints within" feature
