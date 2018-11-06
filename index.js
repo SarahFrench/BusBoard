@@ -1,7 +1,7 @@
-var request = require('request');
-var readline = require('readline-sync');
-var log4js = require('log4js');
-var moment = require('moment');
+const request = require('request');
+const readline = require('readline-sync');
+const log4js = require('log4js');
+const moment = require('moment');
 
 // Our API Credentials with TfL for 'Mumsnet Apprentices's App'
 const appId = '84b66fad';
@@ -99,7 +99,7 @@ function printArrivingBuses(arrivingBuses){
 
   let timeToLive;
 
-  for (var i = 0; i < Math.min(5,arrivingBuses.length); i++) { //refactored using XXX
+  for (let i = 0; i < Math.min(5,arrivingBuses.length); i++) { //refactored using XXX
     timeToLive = moment(arrivingBuses[i].timeToLive).fromNow();
     console.log(`\t${i + 1}: ${arrivingBuses[i].lineId} to ${arrivingBuses[i].destinationName} arrives ${timeToLive}`)
   }
