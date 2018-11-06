@@ -42,19 +42,34 @@ Your program should:
     Remember : ensure you're using a sensible module structure with well-named functions
 
 
-JSON file from TfL does not list arriving buses in order of arrival. To do this we sort the array of arriving bus objects using a function called sortBusArrivals() using a comparison function we found at Stack Exchange (https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value).
+JSON file from TfL does not list arriving buses in order of arrival. To do this
+we sort the array of arriving bus objects using a function called sortBusArrivals()
+using a comparison function we found at Stack Exchange (https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value).
 
-Instead of using moment to calculate arrival time of bus relative to now, could have used timeToStation property of bus objects. timeToStation: 620 = 620 seconds until arrival.
+Instead of using moment to calculate arrival time of bus relative to now, could
+have used timeToStation property of bus objects. timeToStation: 620 = 620 seconds
+until arrival.
 
 **Part 2: Bus Stops (near a given postcode)**
 
 1) Get longitude and latitude using postcode.io API
 2) Get nearest bus stops from long/lat coordinates using TfL
     - Gets a list of StopPoints within {radius} by the specified criteria
-    - ERROR IN SWAGGER OUTPUT: if URL contains &location.lat=xxx it doesn't work, but if URL contains &lat=xxx it does.
+    - ERROR IN SWAGGER OUTPUT: if URL contains &location.lat=xxx it doesn't work,
+      but if URL contains &lat=xxx it does.
       https://api.tfl.gov.uk/swagger/ui/index.html#!/StopPoint/StopPoint_GetByGeoPoint
 
 NOTE:
-To make sure that different processes (e.g. loading info from TfL) occur in the correct order we call functions from within functions (to force order of events to be when variables have been assigned the required values). This can be changed in future to use promises. If we weren't refactoring tomorrow, would need to change function names as they aren't accurate.
+To make sure that different processes (e.g. loading info from TfL) occur in the
+correct order we call functions from within functions (to force order of events
+to be when variables have been assigned the required values). This can be changed
+in future to use promises. If we weren't refactoring tomorrow, would need to change
+function names as they aren't accurate.
 
-User input postcode ==> findLongLat(postcode) =inside=> find2ClosestBusStops(postcodeLongLat) =inside=> getArrivingBuses(nearbyStopCodes) =inside=> printArrivingBuses(arrivingBuses). Everything is nested.
+User input postcode ==> findLongLat(postcode) =inside=> find2ClosestBusStops(postcodeLongLat)
+=inside=> getArrivingBuses(nearbyStopCodes) =inside=> printArrivingBuses(arrivingBuses).
+
+Everything is nested.
+
+
+**Part 3: Promises - aka how to prevent the above nesting**
