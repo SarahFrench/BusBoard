@@ -73,3 +73,8 @@ Everything is nested.
 
 
 **Part 3: Promises - aka how to prevent the above nesting**
+
+What needs to be addressed with Promises:
+    - Latitude & Longitude data from postcodes.io API
+    - Nearby Bus Stop information from TfL API
+    - Arriving Buses for a given stop (done for each Bus Stop, currently 2)
