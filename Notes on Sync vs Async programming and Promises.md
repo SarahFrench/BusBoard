@@ -132,4 +132,4 @@ Promise.all()
         - Promise.all() is a Promise itself?
 
 Promise.race()
-    - This Promise is Fulfilled once the first Promise in the array is Fulfilled. 
+    - This Promise is Fulfilled once the first Promise in the array is Fulfilled.

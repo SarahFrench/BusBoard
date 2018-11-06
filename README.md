@@ -78,3 +78,5 @@ What needs to be addressed with Promises:
     - Latitude & Longitude data from postcodes.io API
     - Nearby Bus Stop information from TfL API
     - Arriving Buses for a given stop (done for each Bus Stop, currently 2)
+
+Possibly useful: https://html5hive.org/how-to-chain-javascript-promises/
