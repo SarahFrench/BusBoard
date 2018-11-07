@@ -80,16 +80,33 @@ function getArrivingBusesPerStop(arrayOfBusStops){
   arrayOfBusStops.forEach(stopCode => {
       arrayOfArrivalPromises.push(getArrivingBuses(stopCode));
   })
-  let arrayOfArrivals = Promise.all(arrayOfArrivalPromises); //Promise.all is a promise itself
-  return arrayOfArrivals;
+  let arrayOfStopsArrivals = Promise.all(arrayOfArrivalPromises); //Promise.all is a promise itself
+  return arrayOfStopsArrivals;
 } //Returns a Promise
 
+function printArrivingBusesPerStop(arrayOfStopsArrivals){
+  console.log(`\nBuses arriving at bus stops near to ${postcode} are: \n`)
+  let numberOfStops = arrayOfStopsArrivals.length;
+  let numberOfBuses;
 
-// getPostcodeLongLat(postcode) //succinct version
-//     .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
-//     .then(getArrivingBusesPerStop)
+  for (let stop = 0; stop < numberOfStops ; stop++){
+    console.log(arrayOfStopsArrivals[stop][0].stationName)
+    numberOfBuses = arrayOfStopsArrivals[stop].length;
+    for (let bus = 0; bus < Math.min(5, numberOfBuses); bus++) { //refactored using XXX
+      timeToLive = moment(arrayOfStopsArrivals[stop][bus].timeToLive).fromNow();
+      console.log(`\t${bus + 1}: ${arrayOfStopsArrivals[stop][bus].lineName} to ${arrayOfStopsArrivals[stop][bus].destinationName} arrives ${timeToLive}`)
+    }
+
+  }
+}
+
+
+getPostcodeLongLat(postcode) //succinct version
+    .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
+    .then(getArrivingBusesPerStop)
+    .then(printArrivingBusesPerStop)
 //
-getPostcodeLongLat(postcode) //more readable version
-    .then( longlat => { return find2ClosestBusStops(longlat); }) //put function name/function itself in here, not an invoked function
-    .then( nearbyStopCodes => { return getArrivingBusesPerStop(nearbyStopCodes); })
-    .then(x => {console.log(x[0]);})
+// getPostcodeLongLat(postcode) //more readable version
+//     .then( longlat => { return find2ClosestBusStops(longlat); }) //put function name/function itself in here, not an invoked function
+//     .then( nearbyStopCodes => { return getArrivingBusesPerStop(nearbyStopCodes); })
+//     .then( arrayOfStopsArrivals => { return printArrivingBusesPerStop(arrayOfStopsArrivals); })
