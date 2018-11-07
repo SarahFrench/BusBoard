@@ -47,7 +47,9 @@ function find2ClosestBusStops(postcodeLongLat){
   let stopTypes = "NaptanPublicBusCoachTram";
   let radius = 1000;
 
-  request(`https://api-radon.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`, function (error, response, body){
+https://api-radon.tfl.gov.uk/StopPoint?stopTypes=NaptanPublicBusCoachTram&radius=1000&lat=-0.143889&lon=51.544011?app_id=84b66fad&app_key=d5c92ab3e708aee956adf533088ad795
+
+  request(`https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}&app_id=${appId}&app_key=${appKey}`, function (error, response, body){
     let parsedBody = JSON.parse(body)
 
     nearbyStopCodes[0] = parsedBody.stopPoints[0].naptanId;

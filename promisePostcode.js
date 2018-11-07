@@ -1,7 +1,7 @@
 const request = require('request');
-
-
 let postcode = 'NW1 8QA';
+let postcodeLongLat =[-0.143889,51.544011];
+
 
 function getPostcodeLongLat(postcode) {
   return new Promise((resolve, reject) => {
@@ -20,6 +20,29 @@ function getPostcodeLongLat(postcode) {
   });
 };
 
-getPostcodeLongLat(postcode)
-    .then( (x) => console.log(x)) //works
-    .then( (x) => console.log(`${x} is the longlat info`)) //doens't work - Why?
+function find2ClosestBusStops(postcodeLongLat){
+  return new Promise ((resolve, reject) => {
+    let nearbyStopCodes = []
+    let stopTypes = "NaptanPublicBusCoachTram";
+    let radius = 1000;
+
+    request(`https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`, function (error, response, body){
+      console.log(body);
+      let parsedBody = JSON.parse(body);
+
+      nearbyStopCodes[0] = parsedBody.stopPoints[0].naptanId;
+      nearbyStopCodes[1] = parsedBody.stopPoints[1].naptanId;
+      resolve(nearbyStopCodes);
+      reject(error);
+    })
+  })
+}
+
+
+getPostcodeLongLat(postcode) //succinct version
+    .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked function
+
+
+getPostcodeLongLat(postcode) //more readable version
+    .then( longlat => { return find2ClosestBusStops(longlat) }; ) //put function name/function itself in here, not an invoked function
+    .then( nearbyStopCodes => {console.log(nearbyStopCodes)})

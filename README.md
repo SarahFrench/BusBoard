@@ -15,6 +15,8 @@ For Promises, see: https://medium.freecodecamp.org/javascript-promises-explained
         TfL API : https://api-portal.tfl.gov.uk/signup
         Our login : CorndelStudents
             Password : Look in Slack messages Sarah&Mitesh
+        NOTE: in URL make sure to use api.tfl.gov.uk not api-radon.tfl.gov.uk => radon isn't supported anymore and will error
+
     Part 2:
         Postcodes API : http://api.postcodes.io
         TfL "get a list of StopPoints within" feature
@@ -79,4 +81,6 @@ What needs to be addressed with Promises:
     - Nearby Bus Stop information from TfL API
     - Arriving Buses for a given stop (done for each Bus Stop, currently 2)
 
-Possibly useful: https://html5hive.org/how-to-chain-javascript-promises/
+Chaining promises:
+  - https://html5hive.org/how-to-chain-javascript-promises/
+  - https://javascript.info/promise-chaining
