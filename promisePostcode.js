@@ -77,7 +77,6 @@ function getArrivingBuses(nearbyStopCode) {
 }
 
 
-
 busstops = ['490007927M', '490011755S'];
 
 function getArrivingBusesPerStop(arrayOfBusStops){
