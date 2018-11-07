@@ -28,6 +28,9 @@ For Promises, see: https://medium.freecodecamp.org/javascript-promises-explained
           - Node package, isn't nice to use: http - https://nodejs.org/api/http.html
           - 3rd party package, nicer to use: request - https://www.npmjs.com/package/request
     Part 2:
+    Part 3:
+    Part 4:
+          - express - https://expressjs.com/en/starter/hello-world.html
 
 
 
@@ -84,3 +87,27 @@ What needs to be addressed with Promises:
 Chaining promises:
   - https://html5hive.org/how-to-chain-javascript-promises/
   - https://javascript.info/promise-chaining
+
+**Part 4: Using express**
+
+Installed express via npm https://www.npmjs.com/package/express
+
+Did Hello World exercise from https://expressjs.com/en/starter/hello-world.html
+using express (express.js file). Open http://localhost:3000/ to see.
+
+Link index.js to app.js with:
+
+          const index = require('./index.js'); //At top of app.js
+
+          exports.BusStopLocator = BusStopLocator; //At end of index.js
+
+In app.js you can call on the BusStopLocator function in:
+
+          app.get('/', (req, res) => {
+            let output = index.BusStopLocator();
+            output.then( x => {res.send(x)});
+          });
+
+Due to us using Promises in index.js, BusStopLocator() returns a Promise. So you
+need to use the .then() function to properly use res.send() to print the Promise
+returned from BusStopLocator() to the webpage.

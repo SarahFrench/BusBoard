@@ -1,11 +1,14 @@
-const request = require('request');
-const readline = require('readline-sync');
-const log4js = require('log4js');
-const moment = require('moment');
+const request = require('request'),
+      readline = require('readline-sync'),
+      log4js = require('log4js'),
+      moment = require('moment');
+
+const BusStop = require('./classes.js').BusStop,
+      Bus = require('./classes.js').Bus;
 
 // Our API Credentials with TfL for 'Mumsnet Apprentices's App'
-const appId = '84b66fad';
-const appKey = 'd5c92ab3e708aee956adf533088ad795';
+const appId = '84b66fad',
+      appKey = 'd5c92ab3e708aee956adf533088ad795';
 
 //=============================================================
 //===========================LOGGING===========================
@@ -43,7 +46,7 @@ function getPostcodeLongLat(postcode) {
 
       })
   });
-}; //Returns a Promise
+}; //Returns a Promise, an array of [longitude, latitude] for the input postcode
 
 function find2ClosestBusStops(postcodeLongLat){
   return new Promise ((resolve, reject) => {
@@ -59,7 +62,7 @@ function find2ClosestBusStops(postcodeLongLat){
       resolve(nearbyStopCodes);
       reject(error);
     })
-  })} //Returns a Promise
+  })} //Returns a Promise, an array of [StopCode1, Stopcode2]
 
 function sortBusArrivals(arrivingBuses){
 
@@ -74,7 +77,7 @@ function sortBusArrivals(arrivingBuses){
   arrivingBuses = arrivingBuses.sort(compare);
 
   return arrivingBuses
-}
+} //Synchronous. Takes in the Objects of all arriving buses for a given stop, re-orders them into soonest to latest
 
 function getArrivingBuses(nearbyStopCode) {
   return new Promise ((resolve, reject) => {
@@ -91,7 +94,7 @@ function getArrivingBuses(nearbyStopCode) {
       reject(error);
     })
   })
-} //Returns a Promise
+} //Returns a Promise, takes in a StopCode and uses TfL API to get an array of arriving bus Objects
 
 function getArrivingBusesPerStop(arrayOfBusStops){
   let arrayOfArrivalPromises = [];
@@ -100,44 +103,63 @@ function getArrivingBusesPerStop(arrayOfBusStops){
   })
   let arrayOfStopsArrivals = Promise.all(arrayOfArrivalPromises); //Promise.all is a promise itself
   return arrayOfStopsArrivals;
-} //Returns a Promise
+} //Returns a Promise, takes in an array of StopCodes, gets the array of arriving bus Objects and pushed into an array.
+//First StopCode in input array => First list of arriving bus Object in output array;
 
-function printArrivingBusesPerStop(arrayOfStopsArrivals){
-  console.log(`\nBuses arriving at bus stops near to ${postcode} are: \n`)
+function createBusStopObjects(arrayOfStopsArrivals){
+  let listBusStops =[];
+
   let numberOfStops = arrayOfStopsArrivals.length;
-  let numberOfBuses;
+  let currentStop, naptanId, stationName, numberOfBuses, vehicleId, lineName, destinationName, timeToLive, eTA;
 
   for (let stop = 0; stop < numberOfStops ; stop++){
-    console.log(arrayOfStopsArrivals[stop][0].stationName)
-    numberOfBuses = arrayOfStopsArrivals[stop].length;
+    currentStop = arrayOfStopsArrivals[stop];
+
+    naptanId = currentStop[0].naptanId;
+    stationName = currentStop[0].stationName;
+    fiveArrivingBuses = [];
+    numberOfBuses = currentStop.length;
+
     for (let bus = 0; bus < Math.min(5, numberOfBuses); bus++) { //refactored using XXX
-      timeToLive = moment(arrayOfStopsArrivals[stop][bus].timeToLive).fromNow();
-      console.log(`\t${bus + 1}: ${arrayOfStopsArrivals[stop][bus].lineName} to ${arrayOfStopsArrivals[stop][bus].destinationName} arrives ${timeToLive}`)
+      vehicleId = currentStop[bus].vehicleId;
+      lineName = currentStop[bus].lineName;
+      destinationName = currentStop[bus].destinationName;
+      timeToLive = currentStop[bus].timeToLive;
+      eTA = moment(currentStop[bus].timeToLive).fromNow();
+
+      newBusObject = new Bus(vehicleId, lineName, destinationName, timeToLive, eTA);
+      fiveArrivingBuses.push(newBusObject);
     }
 
+    newBusStopObject = new BusStop(postcode, naptanId, stationName, fiveArrivingBuses);
+
+    listBusStops.push(newBusStopObject)
   }
+  return listBusStops;
 }
 
 //=============================================================
 //======================EXECUTABLE CODE========================
 
-// console.log("Please enter a bus stop number");
-// let busStop = readline.prompt();
-// let busStop = '490008660N'
 
 
 
-console.log("Please enter a postcode eg. 'NW1 8QA'");
-let postcode = readline.prompt();
-// let postcode = 'NW1 8QA'
+// console.log("Please enter a postcode eg. 'NW1 8QA'");
+// let postcode = readline.prompt();
+let postcode = 'NW1 8QA';
 logger.info("User input taken")
 
-getPostcodeLongLat(postcode) //succinct version
-    .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
-    .then(getArrivingBusesPerStop)
-    .then(printArrivingBusesPerStop)
+function BusStopLocator(){
+    return getPostcodeLongLat(postcode) //succinct version
+            .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
+            .then(getArrivingBusesPerStop)
+            .then(createBusStopObjects)
+  };
+
 //
 // getPostcodeLongLat(postcode) //more readable version
 //     .then( longlat => { return find2ClosestBusStops(longlat); }) //put function name/function itself in here, not an invoked function
 //     .then( nearbyStopCodes => { return getArrivingBusesPerStop(nearbyStopCodes); })
 //     .then( arrayOfStopsArrivals => { return printArrivingBusesPerStop(arrayOfStopsArrivals); })
+
+exports.BusStopLocator = BusStopLocator;
