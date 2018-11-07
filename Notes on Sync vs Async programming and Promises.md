@@ -129,7 +129,7 @@ Promise.all()
     all Fulfilled together by using Promise.all()
         - Promise.all() takes an array of Promises and waits until they're ALL Fulfilled.
         - If any Promises inside Promise.all() are rejected, the entire Promise.all() will be rejected.
-        - Promise.all() is a Promise itself?
+        - Promise.all() is a Promise itself
 
 Promise.race()
     - This Promise is Fulfilled once the first Promise in the array is Fulfilled.
