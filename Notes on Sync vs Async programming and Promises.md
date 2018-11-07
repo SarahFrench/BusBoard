@@ -131,5 +131,11 @@ Promise.all()
         - If any Promises inside Promise.all() are rejected, the entire Promise.all() will be rejected.
         - Promise.all() is a Promise itself
 
+
 Promise.race()
     - This Promise is Fulfilled once the first Promise in the array is Fulfilled.
+
+
+Promises are Flat
+ - If you call on a second Promise within a .then() function of a Promise, you don't need to create a pyramid of .then()s after the second Promise (within the original .then() block). Instead you can return the Promise from the .then() like you would any other value.
+ - 
