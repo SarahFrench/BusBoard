@@ -1,7 +1,13 @@
 const request = require('request');
-let postcode = 'NW1 8QA';
-let postcodeLongLat =[-0.143889,51.544011];
+const readline = require('readline-sync');
+const log4js = require('log4js');
+const moment = require('moment');
 
+// Our API Credentials with TfL for 'Mumsnet Apprentices's App'
+const appId = '84b66fad';
+const appKey = 'd5c92ab3e708aee956adf533088ad795';
+
+let postcode = 'NW1 8QA';
 
 function getPostcodeLongLat(postcode) {
   return new Promise((resolve, reject) => {
@@ -18,16 +24,17 @@ function getPostcodeLongLat(postcode) {
 
       })
   });
-};
+}; //Promise
 
 function find2ClosestBusStops(postcodeLongLat){
   return new Promise ((resolve, reject) => {
-    let nearbyStopCodes = []
-    let stopTypes = "NaptanPublicBusCoachTram";
-    let radius = 1000;
+    let stopTypes = "NaptanPublicBusCoachTram",
+        radius = 1000,
+        url = `https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`
 
-    request(`https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`, function (error, response, body){
-      console.log(body);
+    let nearbyStopCodes = [] //Array to be populated with first two nearby stops
+
+    request(url, function (error, response, body){
       let parsedBody = JSON.parse(body);
 
       nearbyStopCodes[0] = parsedBody.stopPoints[0].naptanId;
@@ -35,14 +42,65 @@ function find2ClosestBusStops(postcodeLongLat){
       resolve(nearbyStopCodes);
       reject(error);
     })
+  })} //Promise
+
+function sortBusArrivals(arrivingBuses){
+
+  function compare(a,b) {
+    if (a.timeToLive < b.timeToLive)
+      return -1;
+    if (a.timeToLive > b.timeToLive)
+      return 1;
+    return 0;
+  }
+
+  arrivingBuses = arrivingBuses.sort(compare);
+
+  return arrivingBuses
+}
+
+function getArrivingBuses(nearbyStopCode) {
+  return new Promise ((resolve, reject) => {
+    let url = `https://api.tfl.gov.uk/StopPoint/${nearbyStopCode}/arrivals?app_id=${appId}&app_key=${appKey}`;
+    request(url, function (error, response, body){
+      if (parseInt(response.statusCode) === 404) {
+        logger.fatal("incorrect bus stop code entered by user");
+      } //Logging
+
+      let arrivingBuses = JSON.parse(body);
+      arrivingBuses = sortBusArrivals(arrivingBuses);
+      // console.log(arrivingBuses[0]);
+      resolve(arrivingBuses);
+      reject(error);
+    })
   })
 }
 
 
-getPostcodeLongLat(postcode) //succinct version
-    .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked function
+
+busstops = ['490007927M', '490011755S'];
+
+function getArrivingBusesPerStop(arrayOfBusStops){
+  let arrayOfArrivalPromises = [];
+  arrayOfBusStops.forEach(stopCode => {
+      arrayOfArrivalPromises.push(getArrivingBuses(stopCode));
+  })
+  let arrayOfArrivals = Promise.all(arrayOfArrivalPromises); //Promise.all is a promise itself
+  return arrayOfArrivals;
+}
+
+getArrivingBusesPerStop(busstops).then( x => {console.log(x);});
 
 
+// getPostcodeLongLat(postcode) //succinct version
+//     .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked function
+
+//
 getPostcodeLongLat(postcode) //more readable version
-    .then( longlat => { return find2ClosestBusStops(longlat) }; ) //put function name/function itself in here, not an invoked function
-    .then( nearbyStopCodes => {console.log(nearbyStopCodes)})
+    .then( longlat => { return find2ClosestBusStops(longlat) }) //put function name/function itself in here, not an invoked function
+    .then( nearbyStopCodes => { let arrivingBuses = [];
+                                nearbyStopCodes.forEach( stopCode => {
+                                                                        getArrivingBuses(stopCode)
+                                                                      });
+                                return arrivingBuses
+                              })
