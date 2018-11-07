@@ -7,6 +7,7 @@ const moment = require('moment');
 const appId = '84b66fad';
 const appKey = 'd5c92ab3e708aee956adf533088ad795';
 
+
 let postcode = 'NW1 8QA';
 
 function getPostcodeLongLat(postcode) {
@@ -24,25 +25,23 @@ function getPostcodeLongLat(postcode) {
 
       })
   });
-}; //Promise
+}; //Returns a Promise
 
 function find2ClosestBusStops(postcodeLongLat){
   return new Promise ((resolve, reject) => {
     let stopTypes = "NaptanPublicBusCoachTram",
         radius = 1000,
-        url = `https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}`
+        url = `https://api.tfl.gov.uk/StopPoint?stopTypes=${stopTypes}&radius=${radius}&lat=${postcodeLongLat[1]}&lon=${postcodeLongLat[0]}&app_id=${appId}&app_key=${appKey}`
 
     let nearbyStopCodes = [] //Array to be populated with first two nearby stops
-
     request(url, function (error, response, body){
       let parsedBody = JSON.parse(body);
-
       nearbyStopCodes[0] = parsedBody.stopPoints[0].naptanId;
       nearbyStopCodes[1] = parsedBody.stopPoints[1].naptanId;
       resolve(nearbyStopCodes);
       reject(error);
     })
-  })} //Promise
+  })} //Returns a Promise
 
 function sortBusArrivals(arrivingBuses){
 
@@ -74,10 +73,7 @@ function getArrivingBuses(nearbyStopCode) {
       reject(error);
     })
   })
-}
-
-
-busstops = ['490007927M', '490011755S'];
+} //Returns a Promise
 
 function getArrivingBusesPerStop(arrayOfBusStops){
   let arrayOfArrivalPromises = [];
@@ -86,20 +82,14 @@ function getArrivingBusesPerStop(arrayOfBusStops){
   })
   let arrayOfArrivals = Promise.all(arrayOfArrivalPromises); //Promise.all is a promise itself
   return arrayOfArrivals;
-}
-
-getArrivingBusesPerStop(busstops).then( x => {console.log(x);});
+} //Returns a Promise
 
 
 // getPostcodeLongLat(postcode) //succinct version
-//     .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked function
-
+//     .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
+//     .then(getArrivingBusesPerStop)
 //
 getPostcodeLongLat(postcode) //more readable version
-    .then( longlat => { return find2ClosestBusStops(longlat) }) //put function name/function itself in here, not an invoked function
-    .then( nearbyStopCodes => { let arrivingBuses = [];
-                                nearbyStopCodes.forEach( stopCode => {
-                                                                        getArrivingBuses(stopCode)
-                                                                      });
-                                return arrivingBuses
-                              })
+    .then( longlat => { return find2ClosestBusStops(longlat); }) //put function name/function itself in here, not an invoked function
+    .then( nearbyStopCodes => { return getArrivingBusesPerStop(nearbyStopCodes); })
+    .then(x => {console.log(x[0]);})
