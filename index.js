@@ -106,7 +106,7 @@ function getArrivingBusesPerStop(arrayOfBusStops){
 } //Returns a Promise, takes in an array of StopCodes, gets the array of arriving bus Objects and pushed into an array.
 //First StopCode in input array => First list of arriving bus Object in output array;
 
-function createBusStopObjects(arrayOfStopsArrivals){
+function createBusStopObjects(arrayOfStopsArrivals, postcode){
   let listBusStops =[];
 
   let numberOfStops = arrayOfStopsArrivals.length;
@@ -146,14 +146,16 @@ function createBusStopObjects(arrayOfStopsArrivals){
 
 // console.log("Please enter a postcode eg. 'NW1 8QA'");
 // let postcode = readline.prompt();
-let postcode = 'NW1 8QA';
-logger.info("User input taken")
+// let postcode = 'NW1 8QA';
+// logger.info("User input taken")
 
-function BusStopLocator(){
+
+
+function BusStopLocator(postcode){
     return getPostcodeLongLat(postcode) //succinct version
             .then(find2ClosestBusStops) //put function name/function itself in here, not an invoked
             .then(getArrivingBusesPerStop)
-            .then(createBusStopObjects)
+            .then((arrayOfStopsArrivals) => createBusStopObjects(arrayOfStopsArrivals, postcode))
   };
 
 //

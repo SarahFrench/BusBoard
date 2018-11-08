@@ -11,9 +11,17 @@ app.title = "Sarah & Mitesh's BusBoard";
 
 app.use(express.static('frontend'));
 
-app.get('/departureBoards', (req, res) => {
-  let output = BusStopLocator('SW13HX');
-  output.then( x => {res.send(x)});
+app.get('/departureBoards', (request, response) => {
+  let postcode = request.query.postcode;
+  console.log(postcode)
+  let output = BusStopLocator(postcode);
+  output.then( x => {response.send(x)});
 })
+
+
+
+
+
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
