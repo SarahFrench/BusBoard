@@ -8,9 +8,10 @@ let postcode;
 // xhttp.open('GET', `http://localhost:3000/departureBoards?postcode=${postcode}`, true);  //true = return as JSON
 
 
-function postBusInfo(arrivalInfo){
-  // let busStop1 = arrivalInfo[0],
-  //     busStop2 = arrivalInfo[1];
+function postBusInfo(postcode, arrivalInfo){
+
+  document.querySelector("#message").innerHTML = `The next buses near you in ${postcode} are:`;
+
 
   let node,
       textnode,
@@ -30,8 +31,15 @@ function postBusInfo(arrivalInfo){
 }
 
 
-function clearNodes(){
-  
+function clearNodes(arrivalInfo){
+  for (let i = 1 ; i <= arrivalInfo.length ; i++){
+    let myNode = document.querySelector(`#stop${i}_arrivals`)
+    if (myNode !== null){
+      while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+      }
+    }
+  }
 }
 
 
@@ -53,11 +61,10 @@ function sendPostcodeRequestToAPI() {
   xhttp.onload = function() {
       // Handle response here using e.g. xhttp.status, xhttp.response, xhttp.responseText
       let response = xhttp.response;
-      response = JSON.parse(response);
+      arrivalInfo = JSON.parse(response);
 
-      postBusInfo(response);
-
+      clearNodes(arrivalInfo);
+      postBusInfo(postcode, arrivalInfo);
   }
-
   xhttp.send();
 }

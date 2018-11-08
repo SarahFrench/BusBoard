@@ -5,24 +5,26 @@
     <meta charset="utf-8">
     <title>Departure boards</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
   </head>
   <body>
-    <h1>BusBoard</h1>
-    <form action="javascript:void(0)" onsubmit="sendPostcodeRequestToAPI();" id="postcodeForm">
-        Postcode:<br>
-        <input type="text" name="postcode">
-        <input type="submit" value="Submit">
-    </form>
-    <div id="results">
-        <h2>Results</h2>
-        <h3 id="stop1_name">Example stop 1</h3>
-        <ol id="stop1_arrivals">
 
-        </ol>
-        <h3 id="stop2_name">Example stop 2</h3>
-        <ol id="stop2_arrivals">
-
-        </ol>
+    <div id=#bar></div>
+    <div id = "board">
+      <h1 id="title">BusBoard</h1>
+      <p>An API created by Sarah and Mitesh</p> <br>
+      <form action="javascript:void(0)" onsubmit="sendPostcodeRequestToAPI();" id="postcodeForm">
+          <h2>Enter a postcode:<h2>
+          <input type="text" name="postcode">
+          <input type="submit" value="Submit">
+      </form>
+      <div id="results">
+          <h3 id="message"></h3>
+          <h3 id="stop1_name"></h3>
+          <ol id="stop1_arrivals"></ol> <!–– li elements are added here by departures.js––>
+          <h3 id="stop2_name"></h3>
+          <ol id="stop2_arrivals"></ol> <!–– li elements are added here by departures.js––>
+      </div>
     </div>
   </body>
   <script src="departures.js"></script>
