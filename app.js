@@ -1,5 +1,5 @@
 const readline = require('readline-sync');
-const index = require('./index.js');
+const BusStopLocator = require('./index.js').BusStopLocator;
 
 const express = require('express')
 const app = express()
@@ -9,22 +9,11 @@ const port = 3000
 app.title = "Sarah & Mitesh's BusBoard";
 
 
-app.get('/', (req, res) => {
-  let output = index.BusStopLocator();
+app.use(express.static('frontend'));
+
+app.get('/departureBoards', (req, res) => {
+  let output = BusStopLocator('SW13HX');
   output.then( x => {res.send(x)});
-});
-
-
-//
-//
-//
-// app.post()
-// app.get('/departureBoards', (req, res) => {
-//
-//   //CODE FOR ACCESSING APIS AND GENERATING OUTPUT TO PRINT/TURN INTO HTML
-//
-//   res.send("output string or html")
-// });
-
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

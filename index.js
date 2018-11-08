@@ -160,6 +160,6 @@ function BusStopLocator(){
 // getPostcodeLongLat(postcode) //more readable version
 //     .then( longlat => { return find2ClosestBusStops(longlat); }) //put function name/function itself in here, not an invoked function
 //     .then( nearbyStopCodes => { return getArrivingBusesPerStop(nearbyStopCodes); })
-//     .then( arrayOfStopsArrivals => { return printArrivingBusesPerStop(arrayOfStopsArrivals); })
+//     .then( arrayOfStopsArrivals => { return createBusStopObjects(arrayOfStopsArrivals); })
 
 exports.BusStopLocator = BusStopLocator;

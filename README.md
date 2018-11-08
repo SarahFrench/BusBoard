@@ -111,3 +111,8 @@ In app.js you can call on the BusStopLocator function in:
 Due to us using Promises in index.js, BusStopLocator() returns a Promise. So you
 need to use the .then() function to properly use res.send() to print the Promise
 returned from BusStopLocator() to the webpage.
+
+
+Look up:
+  -   HTML inputs into JS
+  -   Query parameters go into express
