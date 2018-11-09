@@ -113,6 +113,5 @@ need to use the .then() function to properly use res.send() to print the Promise
 returned from BusStopLocator() to the webpage.
 
 
-Look up:
-  -   HTML inputs into JS
-  -   Query parameters go into express
+HTML inputs into JS = https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+Query parameters go into express = http://junerockwell.com/difference-parameters-query-strings-express-js/
