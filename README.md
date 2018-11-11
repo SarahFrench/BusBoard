@@ -88,6 +88,8 @@ Chaining promises:
   - https://html5hive.org/how-to-chain-javascript-promises/
   - https://javascript.info/promise-chaining
 
+As soon as you call on the postcodes.io API you start operating asynchronously, so you need the function calling on the API to return a promise. Once you enter 'Promise-y' territory you can't leave, so all further functions need to be nested within the first 'Promise-y' function, or you need subsequent functions to also return Promises (so that the input Promise can be used). The information flowing through the script stays 'Promise-y' until you log in the console or display on a webpage.
+
 **Part 4: Using express**
 
 Installed express via npm https://www.npmjs.com/package/express
@@ -115,3 +117,44 @@ returned from BusStopLocator() to the webpage.
 
 HTML inputs into JS = https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
 Query parameters go into express = http://junerockwell.com/difference-parameters-query-strings-express-js/
+
+Honestly, I didn't really get this bit, though I got it working.
+
+In the local departures.js file:
+
+        xhttp.open('GET', `http://localhost:3000/departureBoards?postcode=${postcode}`, true);
+        
+        Sends request to the API via GET method with a query string contained in the variable postcode (a string)
+
+This is a GET method where
+
+        app.get('/departureBoards', (request, response) => {
+        let postcode = request.query.postcode;
+        console.log(postcode)
+        let output = BusStopLocator(postcode);
+        output.then( x => {response.send(x)});
+        })
+        
+        Here request is incoming info from the HTTP request sent from the user in the browser. Response is the JSON file sent from our API.
+        The GET HTTP request sends a query string (?postcode="string") which we access and assign to the postcode varible (let postcode request.query.postcode) and pass to the BusStopLocator function we inport from the original index.js file where we call on the various TfL APIs.
+
+
+**Part 5 : Creating a website**
+
+To post the arriving buses we edit the DOM
+
+This causes headings to be created saying the bus stop's name, by editing the innerHTML of the tags :
+
+        document.querySelector(`#stop${i}_name`).innerHTML = busStop.stationName;
+
+Following submission of a postcode by clicking the button, this creates new li elements for each arriving bus, which are children of an ol element, and text nodes within that child element:
+
+        busStop.fiveArrivingBuses.forEach( bus => {
+            node = document.createElement("LI");                 // Create a <li> node
+            textnode = document.createTextNode(`${bus.lineName} to ${bus.destinationName} arrives ${bus.eTA}`);    // Create a text node
+            node.appendChild(textnode);                              // Append the text to <li>
+            document.querySelector(`#stop${i}_arrivals`).appendChild(node);
+        })
+
+To protect against someone pressing the button multiple times, we created a clearNodes() function to run before the function adding nodes. This way if someone presses a button twice the arriving buses are added as nodes, removed, and then recreated. Otherwise there'll be duplicate list items.
+

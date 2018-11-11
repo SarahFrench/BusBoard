@@ -53,8 +53,6 @@ function sendPostcodeRequestToAPI() {
   postcode = formData.get('postcode');
   postcode = postcode.toUpperCase().replace(/\s/g, ""); //remove any whitespace
 
-  console.log(`http://localhost:3000/departureBoards?postcode=${postcode}`);
-
   var xhttp = new XMLHttpRequest();
   xhttp.open('GET', `http://localhost:3000/departureBoards?postcode=${postcode}`, true);  //true = return as JSON
   xhttp.setRequestHeader('Content-Type', 'application/json');
